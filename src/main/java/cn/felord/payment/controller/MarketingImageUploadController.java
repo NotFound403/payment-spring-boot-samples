@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The type Marketing image upload controller.
+ * 营销图片上传.
  */
 @RestController
 @RequestMapping("/marketing")
