@@ -1,0 +1,18 @@
+# 以下参数均为虚构
+wechat:
+  pay:
+    v3:
+      # 租户id
+      mobile:
+        # 应用appId 必填
+        app-id: wx554b6b******54312
+        # api 密钥 可不填 目前V3没什么用
+        app-secret: felordcn
+        # api v3 密钥 必填
+        app-v3-secret: 0e4efac*************5303ec
+        # 微信支付商户号 必填
+        mch-id: 1123****9
+        # 商户服务器域名 用于回调  需要放开回调接口的安全策略 必填
+        domain: https://felord.cn
+        # 商户 api 证书路径 必填  填写classpath路径 位于 maven项目的resources文件下
+        cert-path: wechat/apiclient_cert.p12
