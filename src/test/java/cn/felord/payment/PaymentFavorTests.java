@@ -55,7 +55,7 @@ class PaymentFavorTests {
         params.setAvailableEndTime(availableEndTime);
         //  false 为预充值代金券   true 为免充值代金券
         params.setNoCash(false);
-        // 商户侧唯一订单号
+        // 商户侧唯一订单号 一定要唯一
         params.setOutRequestNo("Q20201213000001");
 
         // 核销规则
@@ -114,7 +114,8 @@ class PaymentFavorTests {
      */
     @Test
     public void startStockTest() {
-        WechatResponseEntity<ObjectNode> wechatResponseEntity = wechatApiProvider.favorApi(tenantId).startStock("15342136");
+//        15347538
+        WechatResponseEntity<ObjectNode> wechatResponseEntity = wechatApiProvider.favorApi(tenantId).startStock("15347538");
         // 成功后 响应体会返回 stock_id
         Assertions.assertThat(wechatResponseEntity.getBody().get("stock_id")).isNotNull();
     }
@@ -137,17 +138,18 @@ class PaymentFavorTests {
         final StocksSendParams params = new StocksSendParams();
         // 发券只需要传递以下三个参数
         // 批次id
-        params.setStockId("15337294");
+        params.setStockId("15347538");
         // 用户对应 wechat.pay.v3.<tenantId>.app-id 的 openid
-        params.setOpenid("omDFY5rnZd2_0f-pMWJs2A3zd57c");
+        params.setOpenid("ooadI5kQYrrCqpgbisvC8bEw_oUc");
         // 商户侧保证唯一的流水号
-        params.setOutRequestNo("D12456202011251641219x");
+        params.setOutRequestNo("D12456202012161641219x");
         // 指定面额发券，面额  注意场景   选填
         // params.setCouponValue(100L);
         // 指定面额发券批次门槛 注意场景  选填
         // params.setCouponMinimum(2000L);
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).sendStock(params);
-        // 成功后 响应体会返回 coupon_id
+        // 成功后 响应体会返回 coupon_id 18762927655
+        System.out.println("responseEntity = " + responseEntity);
         Assertions.assertThat(responseEntity.getBody().get("coupon_id")).isNotNull();
     }
 

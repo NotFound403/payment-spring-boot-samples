@@ -60,6 +60,7 @@ public class PaymentDirectTests {
 
         payParams.setDescription("felord-tool");
         payParams.setOutTradeNo("X1354444202012161348");
+        // 需要定义回调通知
         payParams.setNotifyUrl("/wx/pay/notify");
         Amount amount = new Amount();
         amount.setTotal(100);
