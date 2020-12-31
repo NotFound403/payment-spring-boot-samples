@@ -1,15 +1,26 @@
 package cn.felord.payment;
 
+import cn.felord.payment.wechat.v3.SignatureProvider;
 import cn.felord.payment.wechat.v3.WechatApiProvider;
+import cn.felord.payment.wechat.v3.WechatMetaBean;
 import cn.felord.payment.wechat.v3.WechatResponseEntity;
 import cn.felord.payment.wechat.v3.model.Amount;
 import cn.felord.payment.wechat.v3.model.PayParams;
 import cn.felord.payment.wechat.v3.model.Payer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.AlternativeJdkIdGenerator;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.IdGenerator;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Signature;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 支付直连模式测试.
@@ -23,12 +34,45 @@ public class PaymentDirectTests {
      * 配置中的租户
      */
     String tenantId = "mobile";
-    /**
-     * The Wechat api provider.
-     */
+
     @Autowired
     WechatApiProvider wechatApiProvider;
+    @Autowired
+    SignatureProvider signatureProvider;
+    /**
+     * 签名验证.
+     */
+    @SneakyThrows
+    @Test
+    void signAndVerifyTest() {
 
+        WechatMetaBean wechatMetaBean = signatureProvider.wechatMetaContainer().getWechatMeta(tenantId);
+        Signature signer = Signature.getInstance("SHA256withRSA");
+        // 私钥加签
+        signer.initSign(wechatMetaBean.getKeyPair().getPrivate());
+
+        long timestamp = System.currentTimeMillis() / 1000;
+        System.out.println("appid = wx55a75ae9fd5d3b78" );
+        System.out.println("timestamp = " + timestamp);
+        IdGenerator ID_GENERATOR = new AlternativeJdkIdGenerator();
+        String nonceStr = ID_GENERATOR.generateId()
+                .toString()
+                .replaceAll("-", "");
+        System.out.println("nonceStr = " + nonceStr);
+        String prepay_id = "wx201410272009395522657a690389285100";
+        System.out.println("prepay_id = " + prepay_id);
+        String signatureStr = Stream.of("wx55a75ae9fd5d3b78", String.valueOf(timestamp), nonceStr, prepay_id)
+                .collect(Collectors.joining("\n", "", "\n"));
+
+        signer.update(signatureStr.getBytes(StandardCharsets.UTF_8));
+        String encode = Base64Utils.encodeToString(signer.sign());
+        // 公钥 验证签名
+        signer.initVerify(wechatMetaBean.getKeyPair().getPublic());
+        signer.update(signatureStr.getBytes(StandardCharsets.UTF_8));
+        boolean verify = signer.verify(Base64Utils.decode(encode.getBytes(StandardCharsets.UTF_8)));
+
+        Assertions.assertThat(verify).isTrue();
+    }
 
     /**
      * APP支付商户服务端测试.
