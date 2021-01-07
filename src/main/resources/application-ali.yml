@@ -1,0 +1,12 @@
+# 支付宝支付配置，以下为沙盒环境，正式环境请使用真实的线上配置。沙盒中证书参考 alipay-sandbox 文件夹下的配置
+# 请参考Payment Spring Boot文档
+ali:
+  pay:
+    v1:
+      app-id: 2016102700769563
+      app-private-key-path: alipay-sandbox/app_rsa
+      alipay-public-cert-path: alipay-sandbox/alipayCertPublicKey_RSA2.crt
+      alipay-root-cert-path: alipay-sandbox/alipayRootCert.crt
+      app-cert-public-key-path: alipay-sandbox/appCertPublicKey_2016102700769563.crt
+      # 沙盒测试网关  正式请移除server-url 配置即可
+      server-url: https://openapi.alipaydev.com/gateway.do;

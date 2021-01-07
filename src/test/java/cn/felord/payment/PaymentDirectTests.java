@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.AlternativeJdkIdGenerator;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.IdGenerator;
@@ -23,11 +24,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 支付直连模式测试.
+ * 微信支付直连模式测试，启用的为application-wechat.yml
  *
  * @author Dax
  * @since 13 :39
  */
+@ActiveProfiles("wechat")
 @SpringBootTest
 public class PaymentDirectTests {
     /**

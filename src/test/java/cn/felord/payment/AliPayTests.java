@@ -9,16 +9,26 @@ import com.alipay.api.response.AlipayTradePrecreateResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
- * 支付宝测试.
+ * 支付宝测试，启用的为application-ali.yml
  */
+@ActiveProfiles("ali")
 @SpringBootTest
 public class AliPayTests {
+    /**
+     * The Alipay client.
+     */
     @Autowired
     AlipayClient alipayClient;
 
 
+    /**
+     * 红包.
+     *
+     * @throws AlipayApiException the alipay api exception
+     */
     @Test
     public void campaignCash() throws AlipayApiException {
         AlipayMarketingCampaignCashCreateRequest request = new AlipayMarketingCampaignCashCreateRequest();
@@ -39,6 +49,11 @@ public class AliPayTests {
         System.out.println("execute = " + execute.getBody());
     }
 
+    /**
+     * 当面付.
+     *
+     * @throws AlipayApiException the alipay api exception
+     */
     @Test
     public void F2F() throws AlipayApiException {
 
@@ -50,8 +65,12 @@ public class AliPayTests {
                 "\"store_id\":\"NJ_001\"," +
                 "\"timeout_express\":\"90m\"}"); //订单允许的最晚付款时间
         AlipayTradePrecreateResponse response = alipayClient.certificateExecute(request);
-        System.out.print(response.getBody());
 
+        String body = response.getBody();
+
+        System.out.println("----------------------------");
+        System.out.print(body);
+        System.out.println("----------------------------");
     }
 
 }

@@ -20,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 
 /**
- * 微信支付代金券.
+ * 微信支付代金券测试，启用的为application-wechat.yml
  */
 @SpringBootTest
 class PaymentFavorTests {

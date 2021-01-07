@@ -6,6 +6,7 @@ import cn.felord.payment.wechat.v3.WechatMarketingFavorApi;
 import cn.felord.payment.wechat.v3.model.ResponseSignVerifyParams;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 回调控制器，当支付成功、代金券核销成功后，微信支付服务器会通过回调进行通知商户侧。
+ * 注意为了演示该配置在使用微信配置application-wechat.yaml才生效
+ *
+ *
+ * 微信回调控制器，当支付成功、代金券核销成功后，微信支付服务器会通过回调进行通知商户侧。
  * 商户侧可以根据微信的回调通知进行支付的后续处理，例如支付状态的变更等等。
  * 需要注意的是回调接口需要白名单放行。
  *
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
  * @author felord.cn
  * @since 1.0.0.RELEASE
  */
+@Profile({"wechat"})
 @RestController
 @RequestMapping("/wxpay/callbacks")
 public class CallbackController {
