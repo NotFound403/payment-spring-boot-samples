@@ -41,6 +41,7 @@ public class PaymentDirectTests {
     WechatApiProvider wechatApiProvider;
     @Autowired
     SignatureProvider signatureProvider;
+
     /**
      * 签名验证.
      */
@@ -54,7 +55,7 @@ public class PaymentDirectTests {
         signer.initSign(wechatMetaBean.getKeyPair().getPrivate());
 
         long timestamp = System.currentTimeMillis() / 1000;
-        System.out.println("appid = wx55a75ae9fd5d3b78" );
+        System.out.println("appid = wx55a75ae9fd5d3b78");
         System.out.println("timestamp = " + timestamp);
         IdGenerator ID_GENERATOR = new AlternativeJdkIdGenerator();
         String nonceStr = ID_GENERATOR.generateId()
