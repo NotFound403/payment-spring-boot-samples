@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author felord.cn
  * @since 1.0.0.RELEASE
  */
-@Profile({"wechat"})
+@Profile({"wechat","dev"})
 @RestController
 @RequestMapping("/wxpay/callbacks")
 public class CallbackController {

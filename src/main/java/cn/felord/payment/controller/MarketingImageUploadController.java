@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  * <p>
  * 微信营销图片上传.
  */
-@Profile({"wechat"})
+@Profile({"wechat","dev"})
 @RestController
 @RequestMapping("/marketing")
 public class MarketingImageUploadController {
