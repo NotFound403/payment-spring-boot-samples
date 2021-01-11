@@ -1,10 +1,10 @@
 package cn.felord.payment;
 
-import cn.felord.payment.wechat.v3.*;
-import cn.felord.payment.wechat.v3.model.Amount;
-import cn.felord.payment.wechat.v3.model.PayParams;
-import cn.felord.payment.wechat.v3.model.Payer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.felord.payment.wechat.v3.SignatureProvider;
+import cn.felord.payment.wechat.v3.WechatApiProvider;
+import cn.felord.payment.wechat.v3.WechatMetaBean;
+import cn.felord.payment.wechat.v3.WechatResponseEntity;
+import cn.felord.payment.wechat.v3.model.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -18,8 +18,6 @@ import org.springframework.util.IdGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Signature;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,8 +35,14 @@ public class PaymentDirectTests {
      */
     String tenantId = "mobile";
 
+    /**
+     * The Wechat api provider.
+     */
     @Autowired
     WechatApiProvider wechatApiProvider;
+    /**
+     * The Signature provider.
+     */
     @Autowired
     SignatureProvider signatureProvider;
 
@@ -106,7 +110,7 @@ public class PaymentDirectTests {
         PayParams payParams = new PayParams();
 
         payParams.setDescription("felord-tool");
-        payParams.setOutTradeNo("X1354444202012161348");
+        payParams.setOutTradeNo("X135444420201521613448");
         // 需要定义回调通知
         payParams.setNotifyUrl("/wx/pay/notify");
         Amount amount = new Amount();
@@ -119,8 +123,10 @@ public class PaymentDirectTests {
 
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.directPayApi(tenantId).jsPay(payParams);
         Assertions.assertThat(responseEntity.is2xxSuccessful()).isTrue();
+
+        System.out.println("responseEntity = " + responseEntity);
 // responseEntity = WechatResponseEntity(httpStatus=200, body={"prepay_id":"wx16140503583504b53b0ddcd64cc2430000"})
-        Assertions.assertThat(responseEntity.getBody().get("prepay_id").asText()).isNotBlank();
+//        Assertions.assertThat(responseEntity.getBody().get("prepay_id").asText()).isNotBlank();
     }
 
     /**
@@ -129,9 +135,9 @@ public class PaymentDirectTests {
     @Test
     public void nativePayTest() {
         PayParams payParams = new PayParams();
-
+        // 商品描述
         payParams.setDescription("felord-tool");
-        payParams.setOutTradeNo("X1354444202012161341");
+        payParams.setOutTradeNo("X13544442020121611341");
         payParams.setNotifyUrl("/wx/pay/notify");
         Amount amount = new Amount();
         amount.setTotal(100);
@@ -142,45 +148,35 @@ public class PaymentDirectTests {
         Assertions.assertThat(responseEntity.getBody().get("code_url").asText()).isNotBlank();
     }
 
-    // 其它不再举例说明 结合微信文档进行处理。
-    // 小程序拉起支付参数测试
-
-    @Autowired
-    WechatPayClient wechatPayClient;
-    @SneakyThrows
+    /**
+     * H5支付测试用例.
+     */
     @Test
-    public void miniApp() {
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
-        String nonceStr = new AlternativeJdkIdGenerator().generateId()
-                .toString()
-                .replaceAll("-", "");
+    public void h5PayTest() {
+        PayParams payParams = new PayParams();
 
-        String packageStr = "prepay_id=wx1613461177695369fdbcfbd5ba8d0f0000";
-        WechatMetaContainer wechatMetaContainer = wechatPayClient.signatureProvider().wechatMetaContainer();
-        Signature signer = Signature.getInstance("SHA256withRSA");
-        WechatMetaBean wechatMetaBean = wechatMetaContainer.getWechatMeta("mobile");
-        signer.initSign(wechatMetaBean.getKeyPair().getPrivate());
-        String signatureStr = Stream.of(wechatMetaBean.getV3().getAppId(), timestamp, nonceStr, packageStr)
-                .collect(Collectors.joining("\n", "", "\n"));
+        payParams.setDescription("felord-tool");
+        payParams.setOutTradeNo("X135144420201521613448");
+        // 需要定义回调通知
+        payParams.setNotifyUrl("/wx/pay/notify");
+        Amount amount = new Amount();
+        amount.setTotal(100);
+        payParams.setAmount(amount);
+        // h5支付需要传递场景信息 具体去看文档 这里只写必填项
+        SceneInfo sceneInfo = new SceneInfo();
 
-        signer.update(signatureStr.getBytes(StandardCharsets.UTF_8));
-        String paySign = Base64Utils.encodeToString(signer.sign());
+        sceneInfo.setPayerClientIp("127.0.0.1");
 
-        // 公钥 验证签名
-        signer.initVerify(wechatMetaBean.getKeyPair().getPublic());
-        signer.update(signatureStr.getBytes(StandardCharsets.UTF_8));
-        boolean verify = signer.verify(Base64Utils.decode(paySign.getBytes(StandardCharsets.UTF_8)));
+        H5Info h5Info = new H5Info();
+        // 只有类型是必填项
+        h5Info.setType("IOS");
+        h5Info.setAppName("码农小胖哥");
 
-        Assertions.assertThat(verify).isTrue();
+        sceneInfo.setH5Info(h5Info);
 
+        payParams.setSceneInfo(sceneInfo);
+        WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.directPayApi(tenantId).h5Pay(payParams);
 
-        Map<String, String> map = new HashMap<>();
-        map.put("timeStamp", timestamp);
-        map.put("nonceStr", nonceStr);
-        map.put("package", packageStr);
-        map.put("signType", "RSA");
-        map.put("paySign", paySign);
-        System.out.println("map = " + new ObjectMapper().writeValueAsString(map));
+        System.out.println("responseEntity = " + responseEntity);
     }
-
 }
