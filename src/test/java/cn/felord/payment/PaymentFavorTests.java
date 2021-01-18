@@ -157,7 +157,7 @@ class PaymentFavorTests {
      * 暂停代金券批次测试.
      */
     @Test
-    public void pauseStockTest(){
+    public void pauseStockTest() {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).pauseStock("15337294");
         // 成功后 响应体会返回 stock_id
         Assertions.assertThat(responseEntity.getBody().get("stock_id")).isNotNull();
@@ -167,7 +167,7 @@ class PaymentFavorTests {
      * 暂停代金券批次测试.
      */
     @Test
-    public void restartStockTest(){
+    public void restartStockTest() {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).restartStock("15337294");
         // 成功后 响应体会返回 stock_id
         Assertions.assertThat(responseEntity.getBody().get("stock_id")).isNotNull();
@@ -197,7 +197,7 @@ class PaymentFavorTests {
      * 查询批次详情测试.
      */
     @Test
-    public void queryStockDetailTest(){
+    public void queryStockDetailTest() {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).queryStockDetail("15337294");
         Assertions.assertThat(responseEntity).isNotNull();
     }
@@ -207,11 +207,11 @@ class PaymentFavorTests {
      * 查询代金券详情测试.
      */
     @Test
-    public void queryCouponDetailsTest(){
+    public void queryCouponDetailsTest() {
         CouponDetailsQueryParams params = new CouponDetailsQueryParams();
-           params.setCouponId("12646688788");
-           params.setOpenId("omDFY5rnZd2_0f-pMWJs2A3zd57c");
-           // appid 自动注入 注意  appid 和 openid 要对应
+        params.setCouponId("12646688788");
+        params.setOpenId("omDFY5rnZd2_0f-pMWJs2A3zd57c");
+        // appid 自动注入 注意  appid 和 openid 要对应
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).queryCouponDetails(params);
         Assertions.assertThat(responseEntity).isNotNull();
     }
@@ -222,9 +222,9 @@ class PaymentFavorTests {
      * 页码 超出会 {"code":"MCH_NOT_EXISTS","message":"商户号不合法"}
      */
     @Test
-    public void queryMerchantsByStockIdTest(){
+    public void queryMerchantsByStockIdTest() {
         MchQueryParams params = new MchQueryParams();
-         // 分页页码，最大1000
+        // 分页页码，最大1000
         params.setOffset(0);
         // 分页大小，最大50
         params.setLimit(10);
@@ -242,7 +242,7 @@ class PaymentFavorTests {
      * 页码 超出会 {"code":"MCH_NOT_EXISTS","message":"商户号不合法"}
      */
     @Test
-    public void queryStockItemsTest(){
+    public void queryStockItemsTest() {
         MchQueryParams params = new MchQueryParams();
         // 分页页码，最大500
         params.setOffset(0);
@@ -261,7 +261,7 @@ class PaymentFavorTests {
      * 页码 超出会 {"code":"MCH_NOT_EXISTS","message":"商户号不合法"}
      */
     @Test
-    public void queryUserCouponsByMchIdTest(){
+    public void queryUserCouponsByMchIdTest() {
 
         UserCouponsQueryParams params = new UserCouponsQueryParams();
         params.setOpenId("omDFY5rnZd2_0f-pMWJs2A3zd57c");
@@ -276,19 +276,20 @@ class PaymentFavorTests {
      * 下载批次核销明细测试.
      */
     @Test
-    public void downloadStockUseFlowTest(){
+    public void downloadStockUseFlowTest() {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).downloadStockUseFlow("15309595");
-        String csv  = responseEntity.getBody().get("csv").asText();
+        String csv = responseEntity.getBody().get("csv").asText();
         // "批次id,优惠id,优惠类型,优惠金额（元）,订单总金额（元）,交易类型,支付单号,消耗时间,消耗商户号,设备号,银行流水号,单品信息\r\n`15*****5,`1818****032,`全场代金券,`1.00,`2.00,`支付,`42000************999,`2020-11-27 16:23:05,`1******9,\"1******0\",\"\",\"\"\r\n总条数\r\n`1\r\n"
         Assertions.assertThat(csv).isNotNull();
     }
+
     /**
      * 下载批次退款明细测试.
      */
     @Test
-    public void downloadStockRefundFlowTest(){
+    public void downloadStockRefundFlowTest() {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).downloadStockRefundFlow("15309595");
-        String csv  = responseEntity.getBody().get("csv").asText();
+        String csv = responseEntity.getBody().get("csv").asText();
 
         Assertions.assertThat(csv).isNotNull();
     }
@@ -316,11 +317,10 @@ class PaymentFavorTests {
 
         String filename = "1_aGzEMxe9vxr9NHDl7kuKYg.png";
         InputStream inputStream = fileSystemResource.getInputStream();
-        MultipartFile mockMultipartFile = new MockMultipartFile(filename,filename,null, inputStream);
+        MultipartFile mockMultipartFile = new MockMultipartFile(filename, filename, null, inputStream);
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.favorApi(tenantId).marketingImageUpload(mockMultipartFile);
         // {"media_url":"https://wxpaylogo.qpic.cn/wxpaylogo/PiajxSqBRaEIPAeia7Imvtsp7V8fibhVcCHXcEGrPNeACFw0sBZ4vAUvQ/0"}
         Assertions.assertThat(responseEntity.getBody().get("media_url")).isNotNull();
     }
-
 
 }

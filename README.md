@@ -7,7 +7,7 @@ Maven 最新中央仓库坐标：
 <dependency>
     <groupId>cn.felord</groupId>
     <artifactId>payment-spring-boot-starter</artifactId>
-    <version>1.0.3.RELEASE</version>
+    <version>1.0.4.RELEASE</version>
 </dependency>
 ```
 
@@ -17,7 +17,7 @@ Maven 最新中央仓库坐标：
 - 微信支付直连模式示例`PaymentDirectTests`
 - 代金券示例`PaymentFavorTests`
 
-> 配置参数和证书均为虚构，请将配置参数设置为真实配置。
+> 配置参数和证书均为虚构，请将配置参数设置为真实配置。有其它疑问请阅读文档
 ## 开源协议
 **Apache 2.0**
 # 文档地址
