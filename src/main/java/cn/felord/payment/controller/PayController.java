@@ -42,7 +42,7 @@ public class PayController {
         // 根据待支付订单信息向微信支付发起支付 并根据返回结果进行处理
         // 如果有状态为待支付之外的状态
         // 根据产品的业务设计自行实现
-        // 支付状态更新逻辑在【回调接口 /wx/pay/notify】中处理  需要幂等处理
+        // 支付状态更新逻辑在【回调接口 /wxpay/callbacks/transaction】中处理  需要幂等处理
 
         // 开发时需要指定使用的商户租户配置 这里为 mobile 请参考 application-wechat.yml
         String tenantId = "mobile";
@@ -54,7 +54,7 @@ public class PayController {
         // 商户侧唯一订单号 建议为商户侧支付订单号 订单表主键 或者唯一标识字段
         payParams.setOutTradeNo("X135423420201521613448");
         // 需要定义回调通知
-        payParams.setNotifyUrl("/wx/pay/notify");
+        payParams.setNotifyUrl("/wxpay/callbacks/transaction");
         Amount amount = new Amount();
         amount.setTotal(100);
         payParams.setAmount(amount);
