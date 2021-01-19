@@ -18,12 +18,13 @@ import java.util.stream.Collectors;
 
 /**
  * 注意为了演示该配置在使用微信配置application-wechat.yaml才生效
- *
- *
+ * <p>
+ * 务必保证回调接口的幂等性
+ * <p>
  * 微信回调控制器，当支付成功、代金券核销成功后，微信支付服务器会通过回调进行通知商户侧。
  * 商户侧可以根据微信的回调通知进行支付的后续处理，例如支付状态的变更等等。
  * 需要注意的是回调接口需要白名单放行。
- *
+ * <p>
  * 开发者只需要编写对结果的{@link java.util.function.Consumer}即可。
  *
  * @author felord.cn
@@ -67,7 +68,7 @@ public class CallbackController {
         params.setWechatpayNonce(wechatpayNonce);
         params.setBody(body);
         return wechatApiProvider.callback(TENANT_ID).couponCallback(params, data -> {
-             //TODO 对回调解析的结果进行消费
+            //TODO 对回调解析的结果进行消费  需要保证消费的幂等性 微信有可能多次调用此接口
         });
     }
 
@@ -100,7 +101,7 @@ public class CallbackController {
         params.setWechatpayNonce(wechatpayNonce);
         params.setBody(body);
         return wechatApiProvider.callback(TENANT_ID).transactionCallback(params, data -> {
-            //TODO 对回调解析的结果进行消费
+            //TODO 对回调解析的结果进行消费  需要保证消费的幂等性 微信有可能多次调用此接口
         });
     }
 
@@ -133,7 +134,7 @@ public class CallbackController {
         params.setWechatpayNonce(wechatpayNonce);
         params.setBody(body);
         return wechatApiProvider.callback(TENANT_ID).combineTransactionCallback(params, data -> {
-            //TODO 对回调解析的结果进行消费
+            //TODO 对回调解析的结果进行消费  需要保证消费的幂等性 微信有可能多次调用此接口
         });
     }
 }

@@ -59,14 +59,14 @@ public class PaymentDirectTests {
         signer.initSign(wechatMetaBean.getKeyPair().getPrivate());
 
         long timestamp = System.currentTimeMillis() / 1000;
-        System.out.println("appid = wx55a75ae9fd5d3b78");
+        System.out.println("appid = wx55a75a13fd5d3b78");
         System.out.println("timestamp = " + timestamp);
         IdGenerator ID_GENERATOR = new AlternativeJdkIdGenerator();
         String nonceStr = ID_GENERATOR.generateId()
                 .toString()
                 .replaceAll("-", "");
         System.out.println("nonceStr = " + nonceStr);
-        String prepay_id = "wx201410272009395522657a690389285100";
+        String prepay_id = "wx201410272009234222657a690389285100";
         System.out.println("prepay_id = " + prepay_id);
         String signatureStr = Stream.of("wx55a75ae9fd5d3b78", String.valueOf(timestamp), nonceStr, prepay_id)
                 .collect(Collectors.joining("\n", "", "\n"));
@@ -90,15 +90,14 @@ public class PaymentDirectTests {
 
         payParams.setDescription("felord-tool");
         payParams.setOutTradeNo("X1354444202012161240");
-        payParams.setNotifyUrl("/wx/pay/notify");
+        // 参考 CallbackController
+        payParams.setNotifyUrl("/wxpay/callbacks/transaction");
         Amount amount = new Amount();
         amount.setTotal(100);
         payParams.setAmount(amount);
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.directPayApi(tenantId).appPay(payParams);
 
         Assertions.assertThat(responseEntity.is2xxSuccessful()).isTrue();
-        // responseEntity = WechatResponseEntity(httpStatus=200, body={"prepay_id":"wx1613461177695369fdbcfbd5ba8d0f0000"})
-        Assertions.assertThat(responseEntity.getBody().get("prepay_id").asText()).isNotBlank();
 
     }
 
@@ -112,7 +111,8 @@ public class PaymentDirectTests {
         payParams.setDescription("felord-tool");
         payParams.setOutTradeNo("X135444420201521613448");
         // 需要定义回调通知
-        payParams.setNotifyUrl("/wx/pay/notify");
+        // 参考 CallbackController
+        payParams.setNotifyUrl("/wxpay/callbacks/transaction");
         Amount amount = new Amount();
         amount.setTotal(100);
         payParams.setAmount(amount);
@@ -125,8 +125,6 @@ public class PaymentDirectTests {
         Assertions.assertThat(responseEntity.is2xxSuccessful()).isTrue();
 
         System.out.println("responseEntity = " + responseEntity);
-// responseEntity = WechatResponseEntity(httpStatus=200, body={"prepay_id":"wx16140503583504b53b0ddcd64cc2430000"})
-//        Assertions.assertThat(responseEntity.getBody().get("prepay_id").asText()).isNotBlank();
     }
 
     /**
@@ -138,7 +136,8 @@ public class PaymentDirectTests {
         // 商品描述
         payParams.setDescription("felord-tool");
         payParams.setOutTradeNo("X13544442020121611341");
-        payParams.setNotifyUrl("/wx/pay/notify");
+        // 参考 CallbackController
+        payParams.setNotifyUrl("/wxpay/callbacks/transaction");
         Amount amount = new Amount();
         amount.setTotal(100);
         payParams.setAmount(amount);
@@ -158,7 +157,8 @@ public class PaymentDirectTests {
         payParams.setDescription("felord-tool");
         payParams.setOutTradeNo("X135144420201521613448");
         // 需要定义回调通知
-        payParams.setNotifyUrl("/wx/pay/notify");
+        // 参考 CallbackController
+        payParams.setNotifyUrl("/wxpay/callbacks/transaction");
         Amount amount = new Amount();
         amount.setTotal(100);
         payParams.setAmount(amount);
