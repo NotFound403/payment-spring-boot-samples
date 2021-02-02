@@ -169,7 +169,7 @@ public class PaymentDirectTests {
 
         H5Info h5Info = new H5Info();
         // 只有类型是必填项
-        h5Info.setType("IOS");
+        h5Info.setType(H5Info.H5SceneType.iOS);
         h5Info.setAppName("码农小胖哥");
 
         sceneInfo.setH5Info(h5Info);
@@ -178,5 +178,20 @@ public class PaymentDirectTests {
         WechatResponseEntity<ObjectNode> responseEntity = wechatApiProvider.directPayApi(tenantId).h5Pay(payParams);
 
         System.out.println("responseEntity = " + responseEntity);
+    }
+
+    @Test
+    public void close() {
+/*
+        PKCS12KeyStoreSpi.DefPKCS12KeyStore defPKCS12KeyStore = new PKCS12KeyStoreSpi.DefPKCS12KeyStore();
+
+        ClassPathResource classPathResource = new ClassPathResource("wechat/apiclient_cert.p12");
+        defPKCS12KeyStore.engineStore(classPathResource.getInputStream(),"");*/
+
+
+//        WechatResponseEntity<ObjectNode> close = wechatApiProvider.directPayApi(tenantId).close("1231231231");
+//
+//        System.out.println("close = " + close);
+
     }
 }
