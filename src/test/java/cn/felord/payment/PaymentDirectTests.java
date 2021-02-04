@@ -1,10 +1,11 @@
 package cn.felord.payment;
 
-import cn.felord.payment.wechat.v3.SignatureProvider;
-import cn.felord.payment.wechat.v3.WechatApiProvider;
-import cn.felord.payment.wechat.v3.WechatMetaBean;
-import cn.felord.payment.wechat.v3.WechatResponseEntity;
+import cn.felord.payment.wechat.v2.WechatPayRefundApi;
+import cn.felord.payment.wechat.v2.WechatV2Client;
+import cn.felord.payment.wechat.v2.model.RefundModel;
+import cn.felord.payment.wechat.v3.*;
 import cn.felord.payment.wechat.v3.model.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -16,6 +17,7 @@ import org.springframework.util.AlternativeJdkIdGenerator;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.IdGenerator;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Signature;
 import java.util.stream.Collectors;
@@ -27,13 +29,13 @@ import java.util.stream.Stream;
  * @author Dax
  * @since 13 :39
  */
-@ActiveProfiles("wechat")
+@ActiveProfiles("dev")
 @SpringBootTest
 public class PaymentDirectTests {
     /**
      * 配置中的租户
      */
-    String tenantId = "mobile";
+   private java.lang.String tenantId = "mobile";
 
     /**
      * The Wechat api provider.
@@ -43,6 +45,8 @@ public class PaymentDirectTests {
     /**
      * The Signature provider.
      */
+    @Autowired
+    WechatPayClient wechatPayClient;
     @Autowired
     SignatureProvider signatureProvider;
 
@@ -181,7 +185,7 @@ public class PaymentDirectTests {
     }
 
     @Test
-    public void close() {
+    public void close() throws IOException {
 /*
         PKCS12KeyStoreSpi.DefPKCS12KeyStore defPKCS12KeyStore = new PKCS12KeyStoreSpi.DefPKCS12KeyStore();
 
@@ -192,6 +196,31 @@ public class PaymentDirectTests {
 //        WechatResponseEntity<ObjectNode> close = wechatApiProvider.directPayApi(tenantId).close("1231231231");
 //
 //        System.out.println("close = " + close);
+
+        WechatMetaBean wechatMeta = wechatPayClient.signatureProvider()
+                .wechatMetaContainer()
+                .getWechatMeta(tenantId);
+        WechatV2Client wechatV2Client = new WechatV2Client(wechatMeta);
+
+        WechatPayRefundApi wechatPayRefundApi = new WechatPayRefundApi(wechatV2Client);
+
+        Integer toral = 100;
+
+
+        RefundModel refundModel = new RefundModel();
+        refundModel.setNotifyUrl("/v1/wxpay/refundTransaction");
+        refundModel.setOutTradeNo("1217752501201407033233368018");
+        refundModel.setOutRefundNo("1217752501201407033233368018");
+        refundModel.setRefundDesc("申请退款");
+        refundModel.setRefundFee(toral);
+        refundModel.setTotalFee(toral);
+
+
+        JsonNode transfer = wechatPayRefundApi.transfer(refundModel);
+
+      String return_msgs = transfer.get("return_msg").asText();
+
+
 
     }
 }
