@@ -15,7 +15,6 @@ import org.springframework.util.IdGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Signature;
-import java.security.cert.X509Certificate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,7 +30,7 @@ public class PaymentDirectTests {
     /**
      * 配置中的租户
      */
-    private java.lang.String tenantId = "mobile";
+    private final String tenantId = "mobile";
 
     /**
      * The Wechat api provider.
@@ -186,9 +185,9 @@ public class PaymentDirectTests {
     @Test
     public void encrypt() {
         SignatureProvider signatureProvider = wechatPayClient.signatureProvider();
-        X509Certificate certificate = signatureProvider.getCertificate();
+        X509WechatCertificateInfo certificate = signatureProvider.getCertificate();
 
-        String encryptRequestMessage = signatureProvider.encryptRequestMessage("422133199003224012", certificate);
+        String encryptRequestMessage = signatureProvider.encryptRequestMessage("422133199003224012", certificate.getX509Certificate());
         System.out.println("encryptRequestMessage = " + encryptRequestMessage);
         Assertions.assertThat(encryptRequestMessage).isNotNull();
 
