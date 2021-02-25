@@ -3,6 +3,7 @@ package cn.felord.payment.controller;
 
 import cn.felord.payment.wechat.v3.WechatApiProvider;
 import cn.felord.payment.wechat.v3.WechatMarketingFavorApi;
+import cn.felord.payment.wechat.v3.WechatPayCallback;
 import cn.felord.payment.wechat.v3.model.ResponseSignVerifyParams;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,8 @@ import java.util.stream.Collectors;
  * 需要注意的是回调接口需要白名单放行。
  * <p>
  * 开发者只需要编写对结果的{@link java.util.function.Consumer}即可。
- *
+ * <p>
+ * 请注意：返回的格格式必须是{@link WechatPayCallback} 给出的格式，不能被包装和更改，切记！
  * @author felord.cn
  * @since 1.0.0.RELEASE
  */
