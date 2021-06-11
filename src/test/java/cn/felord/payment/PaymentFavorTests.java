@@ -97,7 +97,7 @@ class PaymentFavorTests {
         // 设置优惠券描述
         patternInfo.setDescription("核销后不退、不找零；最终解释权归XXX公司所有；");
         // 优惠券背景色
-        patternInfo.setBackgroundColor(CouponBgColor.COLOR070);
+        patternInfo.setBackgroundColor(CouponBgColor.Color020);
         // 设置商家名称
         patternInfo.setMerchantName("XX购物");
         params.setPatternInfo(patternInfo);

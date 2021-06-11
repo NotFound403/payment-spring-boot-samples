@@ -1,16 +1,18 @@
 package cn.felord.payment.controller;
 
+import cn.felord.payment.wechat.enumeration.TradeBillType;
 import cn.felord.payment.wechat.v3.WechatApiProvider;
-import cn.felord.payment.wechat.v3.model.Amount;
-import cn.felord.payment.wechat.v3.model.PayParams;
-import cn.felord.payment.wechat.v3.model.Payer;
+import cn.felord.payment.wechat.v3.WechatDirectPayApi;
+import cn.felord.payment.wechat.v3.model.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  * 支付接口开发样例，以小程序支付为例.
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PayController {
     @Autowired
     private WechatApiProvider wechatApiProvider;
-
+    String TENANT_ID = "mobile";
     /**
      * 总流程建议为 生成商品订单 -> 生成对应的支付订单 -> 支付操作 -> 支付结果回调更新 -> 结束
      * <p>
@@ -45,7 +47,7 @@ public class PayController {
         // 支付状态更新逻辑在【回调接口 /wxpay/callbacks/transaction】中处理  需要幂等处理
 
         // 开发时需要指定使用的商户租户配置 这里为 mobile 请参考 application-wechat.yml
-        String tenantId = "mobile";
+
 
         PayParams payParams = new PayParams();
 
@@ -63,8 +65,39 @@ public class PayController {
         payer.setOpenid("ooadI5kQYrrCqpgbisvC8bEw_oUc");
         payParams.setPayer(payer);
 
-        return wechatApiProvider.directPayApi(tenantId)
+        return wechatApiProvider.directPayApi(TENANT_ID)
                 .jsPay(payParams)
                 .getBody();
+    }
+
+
+    /**
+     * 下载对账单 如果要解析内容的话自行实现
+     *
+     * @return the response entity
+     */
+    @GetMapping("/tradebill")
+    public ResponseEntity<Resource> download() {
+        WechatDirectPayApi wechatDirectPayApi = wechatApiProvider.directPayApi(TENANT_ID);
+
+        TradeBillParams tradeBillParams = new TradeBillParams();
+        tradeBillParams.setBillDate(LocalDate.of(2021, Month.MAY, 20));
+        tradeBillParams.setBillType(TradeBillType.ALL);
+        return wechatDirectPayApi.downloadTradeBill(tradeBillParams);
+    }
+
+    /**
+     * 下载申请资金账单  如果要解析内容的话自行实现
+     *
+     * @return the response entity
+     */
+    @GetMapping("/fundflowbill")
+    public ResponseEntity<Resource> fundFlowBill() {
+        WechatDirectPayApi wechatDirectPayApi = wechatApiProvider.directPayApi(TENANT_ID);
+
+        FundFlowBillParams fundFlowBillParams = new FundFlowBillParams();
+        fundFlowBillParams.setBillDate(LocalDate.of(2021, Month.MAY, 20));
+
+        return wechatDirectPayApi.downloadFundFlowBill(fundFlowBillParams);
     }
 }
