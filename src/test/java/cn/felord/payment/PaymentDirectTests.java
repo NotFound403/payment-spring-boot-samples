@@ -67,7 +67,7 @@ public class PaymentDirectTests {
         System.out.println("nonceStr = " + nonceStr);
         String prepay_id = "wx201410272009234222657a690389285100";
         System.out.println("prepay_id = " + prepay_id);
-        String signatureStr = Stream.of("wx55a75ae9fd5d3b78", String.valueOf(timestamp), nonceStr, prepay_id)
+        String signatureStr = Stream.of("wx55a75ae9fd5d3b78", String.valueOf(timestamp), nonceStr, "prepay_id="+prepay_id)
                 .collect(Collectors.joining("\n", "", "\n"));
 
         signer.update(signatureStr.getBytes(StandardCharsets.UTF_8));
